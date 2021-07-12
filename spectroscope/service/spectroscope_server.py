@@ -4,6 +4,7 @@ import sys, os
 sys.path.append(os.path.dirname(os.path.abspath("app.py")))
 from proto_files.validator import service_pb2_grpc
 from spectroscope.service.rpc_responder import RPCValidatorServicer
+from spectroscope.service.rpc_interceptor import RequestValidatorInterceptor
 from spectroscope.module import Module
 from typing import List, Set, Tuple, Type
 from spectroscope.exceptions import NewValidatorList,NewKeys
@@ -25,7 +26,11 @@ class SpectroscopeServer:
     modules: List[Tuple[Type[Module], dict]],
   ):
     self.servicer = RPCValidatorServicer(modules)
-    self.server = grpc.aio.server(futures.ThreadPoolExecutor(max_workers=10))
+    self.interceptor = RequestValidatorInterceptor()
+    print(type(self.interceptor))
+    print(isinstance(self.interceptor,grpc.aio.ServerInterceptor))
+
+    self.server = grpc.aio.server(futures.ThreadPoolExecutor(max_workers=10), interceptors=(self.interceptor))
     service_pb2_grpc.add_ValidatorServiceServicer_to_server(
         self.servicer,self.server
     )

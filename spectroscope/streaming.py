@@ -61,10 +61,10 @@ class StreamingClient:
                 self.validatorstream.update_validators(validators_set)
                 self.beaconstream.update_validators(validators_set)
             except KeyboardInterrupt:
+                log.info("shutting down the server.. Goodbye !")
                 await self.rpcserver.stop()
                 for t in tasks:
                     t.cancel()
-                log.info("shutting down the server.. Goodbye !")
                 break
             finally:
                 await asyncio.sleep(1)

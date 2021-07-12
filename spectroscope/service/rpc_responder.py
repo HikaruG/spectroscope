@@ -36,22 +36,6 @@ class RPCValidatorServicer(service_pb2_grpc.ValidatorServiceServicer):
                 )
         ]
         return self._return_api(self._send_requests(updates))
-    
-        response = service_pb2.RequestsResult()
-    
-        try:
-            upserted_val = [upserted_val + x for result in result_api for x in result][0]
-            if upserted_val:
-                response.status = 200
-                log.debug("ok, should be raising exception {}".format(upserted_val))
-                raise NewValidatorList(upserted_val)
-            else:
-                response.status = 202
-                pass        
-        finally:
-            response.count = upserted_val
-            return response 
-
 
     def UpNodes(self, request, context):
         updates = [
@@ -107,9 +91,8 @@ class RPCValidatorServicer(service_pb2_grpc.ValidatorServiceServicer):
         response = service_pb2.RequestsResult()
         upserted_val = 0
         log.debug("im in the return api")
-
         try:
-            upserted_val = [upserted_val + x for result in result_api for x in result][0]
+            upserted_val = [x for result in result_api for x in result][0]
             if upserted_val:
                 response.status = 200
                 log.debug("ok, should be raising exception {}".format(upserted_val))

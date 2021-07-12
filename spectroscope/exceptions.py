@@ -21,5 +21,8 @@ class NewValidatorList(Interrupt):
     def need_update(self):
         return self.val_count
 
-class NewKeys(NewValidatorList):
+class InterceptorAction(Interrupt):
+    def __init__(self, intercept_action: int):
+        self.intercept_action = intercept_action
+class NewKeys(InterceptorAction):
     pass
