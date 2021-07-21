@@ -97,13 +97,10 @@ async def run(config_file: click.utils.LazyFile, server_host: click.STRING, serv
     for module, config in config_root.items():
         if module not in SYSTEM_MODULES and config.get("enabled", False):
             try:
-                log.info("Loading module {} with {} args".format(module, len(config)))
                 m = load_entry_point("spectroscope", "spectroscope.module", module)
             except ImportError:
                 raise click.ClickException("Couldn't import module {}".format(module))
             modules.append((m, config))
-            log.info("Loaded {} with config {}".format(m,config))
-            log.info("type :{}".format(type(m)))
 
 
     log.info("Loaded {} modules".format(len(modules)))

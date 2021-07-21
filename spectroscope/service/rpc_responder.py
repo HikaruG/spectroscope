@@ -10,13 +10,15 @@ import json
 #This servicer will take the module necessary to work: 
 # The database plugin used: For now we are using mongodb
 # The db_update subscriber that listens to DatabaseBatch Updates.
-
+import asyncio
 log = spectroscope.log()
 class RPCValidatorServicer(service_pb2_grpc.ValidatorServiceServicer):
     def __init__(
         self,
+        queue: asyncio.Queue,
         modules: List[Tuple[Type[Module], dict]],
         ):
+        self.queue = queue
         self.subscribers = list()
         self.plugins = list()
         for module,config in modules:
@@ -36,22 +38,6 @@ class RPCValidatorServicer(service_pb2_grpc.ValidatorServiceServicer):
                 )
         ]
         return self._return_api(self._send_requests(updates))
-    
-        response = service_pb2.RequestsResult()
-    
-        try:
-            upserted_val = [upserted_val + x for result in result_api for x in result][0]
-            if upserted_val:
-                response.status = 200
-                log.debug("ok, should be raising exception {}".format(upserted_val))
-                raise NewValidatorList(upserted_val)
-            else:
-                response.status = 202
-                pass        
-        finally:
-            response.count = upserted_val
-            return response 
-
 
     def UpNodes(self, request, context):
         updates = [
@@ -111,11 +97,12 @@ class RPCValidatorServicer(service_pb2_grpc.ValidatorServiceServicer):
         try:
             upserted_val = [upserted_val + x for result in result_api for x in result][0]
             if upserted_val:
-                response.status = 200
+                response.status = 201
+                asyncio.create_task(self.queue.put_nowait(NewValidatorList(upserted_val)))
                 log.debug("ok, should be raising exception {}".format(upserted_val))
                 raise NewValidatorList(upserted_val)
             else:
-                response.status = 202
+                response.status = 200
                 pass        
         finally:
             response.count = upserted_val
@@ -132,4 +119,5 @@ class RPCValidatorServicer(service_pb2_grpc.ValidatorServiceServicer):
         request = service_pb2.GetNodesRequest(
             validators = []
         )
+
         return self.GetNodes(request,None)

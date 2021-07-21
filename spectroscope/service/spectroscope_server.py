@@ -8,6 +8,7 @@ from spectroscope.module import Module
 from typing import List, Set, Tuple, Type
 from spectroscope.exceptions import NewValidatorList,NewKeys
 import spectroscope
+import asyncio
 log = spectroscope.log()
 
 class SpectroscopeServer:
@@ -24,13 +25,19 @@ class SpectroscopeServer:
     port: int,
     modules: List[Tuple[Type[Module], dict]],
   ):
-    self.servicer = RPCValidatorServicer(modules)
+    self.host = host
+    self.port = port
+    self.modules = modules
     self.server = grpc.aio.server(futures.ThreadPoolExecutor(max_workers=10))
-    service_pb2_grpc.add_ValidatorServiceServicer_to_server(
-        self.servicer,self.server
-    )
+    
     self.server.add_insecure_port('{}:{}'.format(host,port))
   
+  def setup(self, queue:asyncio.Queue):
+    servicer = RPCValidatorServicer(queue=queue ,modules=self.modules)
+    service_pb2_grpc.add_ValidatorServiceServicer_to_server(
+        servicer,self.server
+    )
+
   async def serve(self):
     await self.server.start()
 
