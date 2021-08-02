@@ -3,7 +3,7 @@ from concurrent import futures
 import sys, os
 
 sys.path.append(os.path.dirname(os.path.abspath("app.py")))
-from proto_files.validator import service_pb2_grpc
+import service_pb2_grpc
 from spectroscope.service.rpc_responder import RPCValidatorServicer
 from spectroscope.module import Module
 from typing import List, Set, Tuple, Type

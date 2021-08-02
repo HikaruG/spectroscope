@@ -16,7 +16,7 @@ setuptools.setup(
         "alerta": ["alerta>=8.2.0"],
         "webhook": ["requests>=2.7.0"],
         "zenduty": ["zenduty-api>=0.2"],
-        "mongodb": ["pymongo>=3.11.4","motor>=2.4.0"]
+        "mongodb": ["pymongo>=3.11.4", "motor>=2.4.0"],
     },
     python_requires=">=3.6",
     entry_points={
@@ -30,6 +30,6 @@ setuptools.setup(
             "status_alert = spectroscope.module.status_alert:StatusAlert",
             "webhook = spectroscope.module.webhook:Webhook",
             "zenduty = spectroscope.module.zenduty:Zenduty",
-        ]
+        ],
     },
 )

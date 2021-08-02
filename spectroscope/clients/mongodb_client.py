@@ -57,12 +57,12 @@ class MongodbClientStreamer:
         unactive_validators = []
         validator_set = self.pymongo.find({})
         for validator in validator_set:
-            if validator['status'] ==3:
-                active_validators.append(validator['_id'])
+            if validator["status"] == 3:
+                active_validators.append(validator["_id"])
             else:
-                unactive_validators.append(validator['_id'])
+                unactive_validators.append(validator["_id"])
         return unactive_validators, active_validators
-    
+
     async def run(self):
         insert_vals = []
         delete_vals = []

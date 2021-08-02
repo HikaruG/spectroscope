@@ -4,7 +4,7 @@ from spectroscope.model.update import DatabaseBatch, DatabaseUpdate
 from spectroscope.module import Module, Plugin, Subscriber
 from spectroscope.constants import enums
 from typing import List, Set, Tuple, Type
-from proto_files.validator import service_pb2, node_pb2, service_pb2_grpc
+import service_pb2, node_pb2, service_pb2_grpc
 
 # This servicer will take the module necessary to work:
 # The database plugin used: For now we are using mongodb

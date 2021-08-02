@@ -37,13 +37,11 @@ class StreamingClient:
         self.queue = asyncio.Queue()
 
     def setup(self):
-        unactive_val,active_validators = self.mongostream.setup(self.queue, self.unactive_validators)
-        self.validatorstream.add_validators(
-            set(map(bytes.fromhex, unactive_val))
+        unactive_val, active_validators = self.mongostream.setup(
+            self.queue, self.unactive_validators
         )
-        self.beaconstream.add_validators(
-            set(map(bytes.fromhex, active_validators))
-        )
+        self.validatorstream.add_validators(set(map(bytes.fromhex, unactive_val)))
+        self.beaconstream.add_validators(set(map(bytes.fromhex, active_validators)))
 
     async def loop(self):
         while True:
